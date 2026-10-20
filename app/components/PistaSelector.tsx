@@ -3,9 +3,8 @@
 // Pista (E2.1, E2.2): 6 tarjetas + opción discreta "mejor no te digo nada".
 // Selección destacada. Persiste en localStorage.
 
-import { useEffect } from 'react';
 import type { Pista } from '../../src/lib/tipos';
-import { loadPreferences, savePreference } from '../../src/lib/preferencias';
+import { usePrefHydrated } from '../../src/lib/preferencias';
 
 export interface PistaSelectorProps {
   value: Pista;
@@ -28,16 +27,7 @@ const PISTAS: TarjetaPista[] = [
 ];
 
 export default function PistaSelector({ value, onChange }: PistaSelectorProps) {
-  useEffect(() => {
-    const pref = loadPreferences();
-    if (pref.pista !== value) onChange(pref.pista);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function cambiar(v: Pista) {
-    onChange(v);
-    savePreference('pista', v);
-  }
+  const cambiar = usePrefHydrated('pista', value, onChange);
 
   const sinPista = value === null;
 

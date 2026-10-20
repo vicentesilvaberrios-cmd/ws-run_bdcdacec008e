@@ -91,7 +91,7 @@ export default function Resultado() {
   const certezaChiste = useMemo(() => {
     if (!resultado) return '';
     if (resultado.clasificacion.lecturaPobre) {
-      return 'No pudimos leer mucho (las señales estaban muy quietas). Mejor no inventar nada.';
+      return 'no pude leer nada';
     }
     const c = resultado.clasificacion.certeza;
     if (c >= 70) return '¡Buena señal! Tu mascota está clarísima.';

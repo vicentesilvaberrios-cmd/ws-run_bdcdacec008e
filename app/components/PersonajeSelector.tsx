@@ -2,10 +2,9 @@
 
 // Selector de personaje (5 tarjetas con preview rápida). Persiste en localStorage.
 
-import { useEffect } from 'react';
 import type { Personaje } from '../../src/lib/tipos';
 import { PERSONAJES, TODOS_LOS_PERSONAJES } from '../../src/lib/personajes';
-import { loadPreferences, savePreference } from '../../src/lib/preferencias';
+import { usePrefHydrated } from '../../src/lib/preferencias';
 
 export interface PersonajeSelectorProps {
   value: Personaje;
@@ -13,16 +12,7 @@ export interface PersonajeSelectorProps {
 }
 
 export default function PersonajeSelector({ value, onChange }: PersonajeSelectorProps) {
-  useEffect(() => {
-    const pref = loadPreferences();
-    if (pref.personaje !== value) onChange(pref.personaje);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function cambiar(v: Personaje) {
-    onChange(v);
-    savePreference('personaje', v);
-  }
+  const cambiar = usePrefHydrated('personaje', value, onChange);
 
   return (
     <div>

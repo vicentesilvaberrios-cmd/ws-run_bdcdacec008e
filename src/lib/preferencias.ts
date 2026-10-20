@@ -1,7 +1,10 @@
+'use client';
+
 // Preferencias persistidas en localStorage (spec 1.4 / 3.6).
 // Claves: pref.personaje, pref.especie, pref.pista, pref.voz.
 // Cargadas al montar; escritas al cambiar.
 
+import { useEffect } from 'react';
 import type { Especie, Personaje, Pista } from './tipos';
 
 export interface Preferencias {
@@ -106,4 +109,24 @@ function esPersonajeValido(v: string | null): v is Personaje {
 
 function esPistaValida(v: string | null): v is Pista {
   return v !== null && (PISTAS_VALIDAS as string[]).includes(v);
+}
+
+// Hook compartido: hidrata el valor de un selector desde localStorage al montar
+// (sólo si difiere del valor actual) y persiste cada cambio. Centraliza la lógica
+// que antes vivía duplicada en EspecieSelector / PersonajeSelector / PistaSelector.
+export function usePrefHydrated<K extends keyof Preferencias>(
+  clave: K,
+  value: Preferencias[K],
+  onChange: (v: Preferencias[K]) => void,
+): (next: Preferencias[K]) => void {
+  useEffect(() => {
+    const pref = loadPreferences();
+    if (pref[clave] !== value) onChange(pref[clave]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (next: Preferencias[K]) => {
+    onChange(next);
+    savePreference(clave, next);
+  };
 }

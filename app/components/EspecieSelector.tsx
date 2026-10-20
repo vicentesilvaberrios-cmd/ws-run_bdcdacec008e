@@ -2,9 +2,8 @@
 
 // Toggle perro/gato. Persiste en localStorage (vía preferencias helper).
 
-import { useEffect, useState } from 'react';
 import type { Especie } from '../../src/lib/tipos';
-import { loadPreferences, savePreference } from '../../src/lib/preferencias';
+import { usePrefHydrated } from '../../src/lib/preferencias';
 
 export interface EspecieSelectorProps {
   value: Especie;
@@ -12,19 +11,7 @@ export interface EspecieSelectorProps {
 }
 
 export default function EspecieSelector({ value, onChange }: EspecieSelectorProps) {
-  // Hidratar desde preferencias en el primer render (cliente)
-  const [, setHydrated] = useState(false);
-  useEffect(() => {
-    const pref = loadPreferences();
-    if (pref.especie !== value) onChange(pref.especie);
-    setHydrated(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function cambiar(v: Especie) {
-    onChange(v);
-    savePreference('especie', v);
-  }
+  const cambiar = usePrefHydrated('especie', value, onChange);
 
   return (
     <div role="radiogroup" aria-label="Especie" className="seg">

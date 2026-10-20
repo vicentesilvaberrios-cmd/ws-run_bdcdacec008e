@@ -87,6 +87,8 @@ export default function Portada() {
       const blobUrl = ej.url;
       setVideo({ file, blobUrl, ancho: 240, alto: 180 });
       setVideoBlob(ej.blob);
+      // E1.4: un clic analiza al instante (sin pasar por la pista).
+      router.push('/analizando');
     } catch {
       setError('No pudimos cargar los ejemplos. Recarga la página.');
     }
