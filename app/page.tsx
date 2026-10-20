@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import DropZone from './components/DropZone';
 import VideoPreview from './components/VideoPreview';
@@ -85,9 +86,13 @@ export default function Portada() {
       const nombre = `ejemplo-${tipo}.webm`;
       const file = new File([ej.blob], nombre, { type: 'video/webm' });
       const blobUrl = ej.url;
-      setVideo({ file, blobUrl, ancho: 240, alto: 180 });
-      setVideoBlob(ej.blob);
       // E1.4: un clic analiza al instante (sin pasar por la pista).
+      // flushSync asegura que el contexto esté poblado antes de navegar, para que
+      // /analizando vea video + videoBlob en su primer render y no redirija a '/'.
+      flushSync(() => {
+        setVideo({ file, blobUrl, ancho: 240, alto: 180 });
+        setVideoBlob(ej.blob);
+      });
       router.push('/analizando');
     } catch {
       setError('No pudimos cargar los ejemplos. Recarga la página.');
